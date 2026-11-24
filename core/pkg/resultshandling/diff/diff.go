@@ -31,17 +31,21 @@ type Options struct {
 // ControlChange represents one comparable failure unit. The first six fields
 // are retained for compatibility with consumers of the original diff format.
 type ControlChange struct {
-	ResourceID         string `json:"resourceID"`
-	ControlID          string `json:"controlID"`
-	ControlName        string `json:"controlName"`
-	Severity           string `json:"severity"`
-	BaseStatus         string `json:"baseStatus"`
-	HeadStatus         string `json:"headStatus"`
-	RuleName           string `json:"ruleName,omitempty"`
-	EvidenceType       string `json:"evidenceType,omitempty"`
-	Path               string `json:"path,omitempty"`
-	EvidenceResourceID string `json:"evidenceResourceID,omitempty"`
-	Reason             string `json:"reason,omitempty"`
+	TargetID           string   `json:"targetID,omitempty"`
+	Category           string   `json:"category,omitempty"`
+	EvidenceRef        string   `json:"evidenceRef,omitempty"`
+	ResourceID         string   `json:"resourceID"`
+	ControlID          string   `json:"controlID"`
+	ControlName        string   `json:"controlName"`
+	Severity           string   `json:"severity"`
+	BaseStatus         string   `json:"baseStatus"`
+	HeadStatus         string   `json:"headStatus"`
+	RuleName           string   `json:"ruleName,omitempty"`
+	EvidenceType       string   `json:"evidenceType,omitempty"`
+	Path               string   `json:"path,omitempty"`
+	EvidenceResourceID string   `json:"evidenceResourceID,omitempty"`
+	Reason             string   `json:"reason,omitempty"`
+	SourceIDs          []string `json:"sourceIDs,omitempty"`
 }
 
 // ChangeSet groups comparable regressions and explicitly separates results

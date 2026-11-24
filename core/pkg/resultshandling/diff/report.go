@@ -39,6 +39,9 @@ type scanReport struct {
 	SummaryDetails summaryDetails `json:"summaryDetails"`
 	Metadata       reportMetadata `json:"metadata,omitempty"`
 	ScanCoverage   scanCoverage   `json:"scanCoverage,omitempty"`
+	ClusterName    string         `json:"clusterName,omitempty"`
+	IdentitySystem string         `json:"identitySystem,omitempty"`
+	DiffMerge      *mergeManifest `json:"x-kubescape-diff-merge,omitempty"`
 }
 
 type resultEntry struct {
@@ -47,10 +50,11 @@ type resultEntry struct {
 }
 
 type controlEntry struct {
-	ControlID string      `json:"controlID"`
-	Name      string      `json:"name"`
-	Status    statusInfo  `json:"status"`
-	Rules     []ruleEntry `json:"rules,omitempty"`
+	ControlID      string      `json:"controlID"`
+	Name           string      `json:"name"`
+	Status         statusInfo  `json:"status"`
+	Rules          []ruleEntry `json:"rules,omitempty"`
+	FrameworkNames []string    `json:"frameworkNames,omitempty"`
 }
 
 type statusInfo struct {
@@ -90,6 +94,8 @@ type frameworkSummary struct {
 type summaryDetails struct {
 	Frameworks []frameworkSummary        `json:"frameworks,omitempty"`
 	Controls   map[string]controlSummary `json:"controls"`
+	Score      float64                   `json:"score,omitempty"`
+	ScoreMode  string                    `json:"x-kubescape-score-mode,omitempty"`
 }
 
 type controlSummary struct {
@@ -103,8 +109,9 @@ type reportMetadata struct {
 }
 
 type contextMetadata struct {
-	Cluster *clusterContext `json:"clusterContextMetadata,omitempty"`
-	Repo    *repoContext    `json:"gitRepoContextMetadata,omitempty"`
+	TargetID string          `json:"targetID,omitempty"`
+	Cluster  *clusterContext `json:"clusterContextMetadata,omitempty"`
+	Repo     *repoContext    `json:"gitRepoContextMetadata,omitempty"`
 }
 
 type clusterContext struct {
@@ -279,6 +286,23 @@ func parseReport(data []byte) (*scanReport, error) {
 			return nil, fmt.Errorf("invalid report scanCoverage: %w", err)
 		}
 	}
+	if clusterNameJSON, exists := topLevel["clusterName"]; exists && !isJSONNull(clusterNameJSON) {
+		if err := json.Unmarshal(clusterNameJSON, &report.ClusterName); err != nil {
+			return nil, fmt.Errorf("invalid report clusterName: %w", err)
+		}
+	}
+	if identityJSON, exists := topLevel["identitySystem"]; exists && !isJSONNull(identityJSON) {
+		if err := json.Unmarshal(identityJSON, &report.IdentitySystem); err != nil {
+			return nil, fmt.Errorf("invalid report identitySystem: %w", err)
+		}
+	}
+	if mergeJSON, exists := topLevel["x-kubescape-diff-merge"]; exists && !isJSONNull(mergeJSON) {
+		var manifest mergeManifest
+		if err := json.Unmarshal(mergeJSON, &manifest); err != nil {
+			return nil, fmt.Errorf("invalid report x-kubescape-diff-merge: %w", err)
+		}
+		report.DiffMerge = &manifest
+	}
 	if err := validateReport(&report); err != nil {
 		return nil, err
 	}
@@ -387,6 +411,31 @@ func effectiveControl(report *scanReport, control controlEntry) controlEntry {
 			filters.FrameworkNames = append(filters.FrameworkNames, framework.Name)
 		}
 	}
+	return effectiveControlForFrameworks(control, filters.FrameworkNames)
+}
+
+// effectiveControlForFrameworks evaluates one control using only exceptions
+// applicable to frameworkNames. An empty list selects framework-agnostic
+// exceptions, so an exception scoped to another framework cannot leak across.
+func effectiveControlForFrameworks(control controlEntry, frameworkNames []string) controlEntry {
+	hasExceptions := false
+	for _, rule := range control.Rules {
+		hasExceptions = hasExceptions || len(rule.Exception) > 0
+	}
+	// Cached evaluation-completeness markers cannot be reconstructed from rules.
+	// Preserve legacy outcomes when no exception needs an effective view.
+	if !hasExceptions || control.Status.SubStatus == string(apis.SubStatusNotEvaluated) {
+		return control
+	}
+	if control.Status.InnerStatus != string(apis.StatusFailed) && control.Status.InnerStatus != string(apis.StatusPassed) {
+		switch apis.ScanningSubStatus(control.Status.SubStatus) {
+		case apis.SubStatusManualReview, apis.SubStatusRequiresReview, apis.SubStatusConfiguration:
+		default:
+			return control
+		}
+	}
+	filters := &helpersv1.Filters{FrameworkNames: append([]string(nil), frameworkNames...)}
+
 	evaluation := resourcesresults.ResourceAssociatedControl{
 		ControlID: control.ControlID,
 		Status:    apis.StatusInfo{InnerStatus: apis.ScanningStatus(control.Status.InnerStatus), SubStatus: apis.ScanningSubStatus(control.Status.SubStatus)},

@@ -5,6 +5,10 @@ import "io"
 type DiffInfo struct {
 	BaseFile          string    // path to base scan JSON report
 	HeadFile          string    // path to head scan JSON report
+	BaseReports       []string  // optional framework-split base report group
+	HeadReports       []string  // optional framework-split head report group
+	MergedBaseOutput  string    // optional path for deterministic merged base report JSON
+	MergedHeadOutput  string    // optional path for deterministic merged head report JSON
 	Format            string    // output format: "pretty-printer", "summary-json", "summary-yaml", "summary-csv", "json", "yaml", "sarif", "junit", "gitlab-sast", or "markdown"
 	Output            string    // output file path; empty means stdout
 	FailOnNew         bool      // exit code 1 when new failures are found

@@ -30,6 +30,11 @@ func (ks *Kubescape) Diff(diffInfo *metav1.DiffInfo) (newFailures int, err error
 		}
 	}
 
+	baseReports, headReports, multiReport := effectiveReportGroups(diffInfo)
+	if multiReport {
+		return ks.diffReportSets(diffInfo, baseReports, headReports)
+	}
+
 	kind, cs, vulnerabilityChangeSet, err := diff.CompareReports(diffInfo.BaseFile, diffInfo.HeadFile, diff.Options{
 		Granularity: diff.Granularity(diffInfo.Granularity),
 	})
