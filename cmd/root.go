@@ -8,6 +8,7 @@ import (
 	"github.com/kubescape/go-logger"
 	"github.com/kubescape/go-logger/helpers"
 	"github.com/kubescape/k8s-interface/k8sinterface"
+	"github.com/kubescape/kubescape/v4/cmd/audit"
 	"github.com/kubescape/kubescape/v4/cmd/completion"
 	"github.com/kubescape/kubescape/v4/cmd/config"
 	"github.com/kubescape/kubescape/v4/cmd/decrypt"
@@ -118,6 +119,7 @@ func getRootCmd(ks meta.IKubescape, ksVersion, ksCommit, ksDate string) *cobra.C
 	rootCmd.PersistentFlags().StringVarP(&rootInfo.KubeContext, "kube-context", "", "", "Kube context. Default will use the current-context")
 	// Supported commands
 	rootCmd.AddCommand(scan.GetScanCommand(ks))
+	rootCmd.AddCommand(audit.GetAuditCmd())
 	rootCmd.AddCommand(decrypt.GetDecryptCommand())
 	rootCmd.AddCommand(download.GetDownloadCmd(ks))
 	rootCmd.AddCommand(list.GetListCmd(ks))

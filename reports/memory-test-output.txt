@@ -1,0 +1,11 @@
+$ AUDIT_MEMTEST_1G=1 go test ./core/pkg/auditlog/ -run TestStreamingMemoryBound -count=1 -v
+=== RUN   TestStreamingMemoryBound
+    mem_test.go:113: input file size: 100.0 MB
+    mem_test.go:113: peak RSS (VmHWM): 47.9 MB; events parsed: 395526; findings: 3024
+--- PASS: TestStreamingMemoryBound (0.95s)
+=== RUN   TestStreamingMemoryBound1GiB
+    mem_test.go:130: input file size: 1024.0 MB
+    mem_test.go:130: peak RSS (VmHWM): 58.9 MB; events parsed: 4050175; findings: 3024
+--- PASS: TestStreamingMemoryBound1GiB (9.13s)
+PASS
+ok  	github.com/kubescape/kubescape/v4/core/pkg/auditlog	10.082s

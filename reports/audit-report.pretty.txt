@@ -1,0 +1,52 @@
+Audit behavior report (complete)
+Files: 2  Events parsed: 2169  Succeeded: 2162  Invalid lines: 5  Findings: 5
+Observed window: 2026-03-09T14:00:00Z .. 2026-03-09T14:09:59Z (tumbling 600s windows, epoch-aligned, UTC)
+WARNING: 3 events had no requestReceivedTimestamp and were excluded from windowed aggregation
+WARNING: 1666 events arrived out of chronological order; window boundaries are taken from the observed minimum/maximum timestamps, not arrival order
+WARNING: 5 lines were not valid audit events and were skipped
+
+BEHAVIOR                 SUBJECT                                 COUNT  EVENTS  FIRST SEEN            LAST SEEN
+bulk-sensitive-read      alice                                   25     30      2026-03-09T14:00:00Z  2026-03-09T14:00:29Z
+privileged-role-binding  eve                                     1      1       2026-03-09T14:04:00Z  2026-03-09T14:04:00Z
+anonymous-access         system:anonymous                        3      3       2026-03-09T14:06:00Z  2026-03-09T14:06:02Z
+privileged-workload      system:serviceaccount:default:deployer  2      2       2026-03-09T14:02:00Z  2026-03-09T14:03:00Z
+exec-into-container      system:serviceaccount:ops:debugger      2      4       2026-03-09T14:05:00Z  2026-03-09T14:05:03Z
+
+- bulk-sensitive-read / alice (window 2026-03-09T14:00:00Z):
+    secrets/prod/db-creds-00
+    secrets/prod/db-creds-01
+    secrets/prod/db-creds-02
+    secrets/prod/db-creds-03
+    secrets/prod/db-creds-04
+    secrets/prod/db-creds-05
+    secrets/prod/db-creds-06
+    secrets/prod/db-creds-07
+    secrets/prod/db-creds-08
+    secrets/prod/db-creds-09
+    secrets/prod/db-creds-10
+    secrets/prod/db-creds-11
+    secrets/prod/db-creds-12
+    secrets/prod/db-creds-13
+    secrets/prod/db-creds-14
+    secrets/prod/db-creds-15
+    secrets/prod/db-creds-16
+    secrets/prod/db-creds-17
+    secrets/prod/db-creds-18
+    secrets/prod/db-creds-19
+    secrets/prod/db-creds-20
+    secrets/prod/db-creds-21
+    secrets/prod/db-creds-22
+    secrets/prod/db-creds-23
+    secrets/prod/db-creds-24
+- privileged-role-binding / eve (window 2026-03-09T14:00:00Z):
+    clusterrolebindings/grant-mallory-admin
+- anonymous-access / system:anonymous (window 2026-03-09T14:00:00Z):
+    configmaps/kube-public/cm-0
+    configmaps/kube-public/cm-1
+    configmaps/kube-public/cm-2
+- privileged-workload / system:serviceaccount:default:deployer (window 2026-03-09T14:00:00Z):
+    apps/deployments/prod/node-agent
+    pods/prod/debug-shell
+- exec-into-container / system:serviceaccount:ops:debugger (window 2026-03-09T14:00:00Z):
+    pods/prod/api-7d9f
+    pods/prod/worker-2

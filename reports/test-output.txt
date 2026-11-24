@@ -1,0 +1,42 @@
+$ go test ./core/pkg/auditlog/ ./cmd/audit/ -count=1 -v
+=== RUN   TestNormalizeSubject
+--- PASS: TestNormalizeSubject (0.00s)
+=== RUN   TestConfigValidation
+--- PASS: TestConfigValidation (0.00s)
+=== RUN   TestMissingResponseStatusIsNotSuccess
+--- PASS: TestMissingResponseStatusIsNotSuccess (0.00s)
+=== RUN   TestSubresourceFoldsIntoParent
+--- PASS: TestSubresourceFoldsIntoParent (0.00s)
+=== RUN   TestWindowMergingAndSplitting
+--- PASS: TestWindowMergingAndSplitting (0.00s)
+=== RUN   TestInvalidLinesSkippedAndCounted
+--- PASS: TestInvalidLinesSkippedAndCounted (0.00s)
+=== RUN   TestMissingAndOutOfOrderTimestampsWarn
+--- PASS: TestMissingAndOutOfOrderTimestampsWarn (0.00s)
+=== RUN   TestDeterministicOutput
+--- PASS: TestDeterministicOutput (0.00s)
+=== RUN   TestArchiveInputsAndCorruption
+--- PASS: TestArchiveInputsAndCorruption (0.00s)
+=== RUN   TestNoSensitiveContentInReport
+--- PASS: TestNoSensitiveContentInReport (0.00s)
+=== RUN   TestEndToEnd_FiveBehaviorsAndNoise
+--- PASS: TestEndToEnd_FiveBehaviorsAndNoise (0.02s)
+=== RUN   TestStreamingMemoryBound
+    mem_test.go:113: input file size: 100.0 MB
+    mem_test.go:113: peak RSS (VmHWM): 48.2 MB; events parsed: 395526; findings: 3024
+--- PASS: TestStreamingMemoryBound (0.94s)
+=== RUN   TestStreamingMemoryBound1GiB
+    mem_test.go:128: set AUDIT_MEMTEST_1G=1 to run the 1 GiB streaming test
+--- SKIP: TestStreamingMemoryBound1GiB (0.00s)
+PASS
+ok  	github.com/kubescape/kubescape/v4/core/pkg/auditlog	0.973s
+=== RUN   TestAuditCommandJSON
+--- PASS: TestAuditCommandJSON (0.00s)
+=== RUN   TestAuditCommandRejectsBadThreshold
+--- PASS: TestAuditCommandRejectsBadThreshold (0.00s)
+=== RUN   TestAuditCommandSARIFAndPretty
+--- PASS: TestAuditCommandSARIFAndPretty (0.00s)
+=== RUN   TestAuditCommandPartialExitError
+--- PASS: TestAuditCommandPartialExitError (0.00s)
+PASS
+ok  	github.com/kubescape/kubescape/v4/cmd/audit	0.052s

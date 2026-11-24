@@ -1,0 +1,154 @@
+{
+  "apiVersion": "audit.kubescape.io/v1",
+  "kind": "AuditBehaviorReport",
+  "metadata": {
+    "name": "audit-behavior-report",
+    "reportType": "audit-behavior"
+  },
+  "summary": {
+    "status": "partial",
+    "filesScanned": 1,
+    "eventsParsed": 40,
+    "eventsSucceeded": 40,
+    "invalidLines": 0,
+    "missingTimestamps": 0,
+    "outOfOrderEvents": 0,
+    "findingsTotal": 5,
+    "findingsByBehavior": {
+      "anonymous-access": 1,
+      "bulk-sensitive-read": 1,
+      "exec-into-container": 1,
+      "privileged-role-binding": 1,
+      "privileged-workload": 1
+    },
+    "window": {
+      "observedStart": "2026-03-09T14:00:00Z",
+      "observedEnd": "2026-03-09T14:06:02Z",
+      "windowSeconds": 600,
+      "basis": "tumbling windows aligned to the Unix epoch in UTC; observedStart/observedEnd are the min/max requestReceivedTimestamp seen in the input"
+    },
+    "partialReason": [
+      "reports/corrupt-demo/broken.tgz: not a valid gzip stream: gzip: invalid header"
+    ]
+  },
+  "findings": [
+    {
+      "behavior": "bulk-sensitive-read",
+      "subject": "alice",
+      "subjectKind": "user",
+      "window": {
+        "start": "2026-03-09T14:00:00Z",
+        "end": "2026-03-09T14:10:00Z"
+      },
+      "count": 25,
+      "events": 30,
+      "firstSeen": "2026-03-09T14:00:00Z",
+      "lastSeen": "2026-03-09T14:00:29Z",
+      "detail": "verb=get resource=secrets",
+      "objects": [
+        "secrets/prod/db-creds-00",
+        "secrets/prod/db-creds-01",
+        "secrets/prod/db-creds-02",
+        "secrets/prod/db-creds-03",
+        "secrets/prod/db-creds-04",
+        "secrets/prod/db-creds-05",
+        "secrets/prod/db-creds-06",
+        "secrets/prod/db-creds-07",
+        "secrets/prod/db-creds-08",
+        "secrets/prod/db-creds-09",
+        "secrets/prod/db-creds-10",
+        "secrets/prod/db-creds-11",
+        "secrets/prod/db-creds-12",
+        "secrets/prod/db-creds-13",
+        "secrets/prod/db-creds-14",
+        "secrets/prod/db-creds-15",
+        "secrets/prod/db-creds-16",
+        "secrets/prod/db-creds-17",
+        "secrets/prod/db-creds-18",
+        "secrets/prod/db-creds-19",
+        "secrets/prod/db-creds-20",
+        "secrets/prod/db-creds-21",
+        "secrets/prod/db-creds-22",
+        "secrets/prod/db-creds-23",
+        "secrets/prod/db-creds-24"
+      ],
+      "objectsTotal": 25
+    },
+    {
+      "behavior": "privileged-role-binding",
+      "subject": "eve",
+      "subjectKind": "user",
+      "window": {
+        "start": "2026-03-09T14:00:00Z",
+        "end": "2026-03-09T14:10:00Z"
+      },
+      "count": 1,
+      "events": 1,
+      "firstSeen": "2026-03-09T14:04:00Z",
+      "lastSeen": "2026-03-09T14:04:00Z",
+      "detail": "verb=create role=cluster-admin boundSubject=mallory",
+      "objects": [
+        "clusterrolebindings/grant-mallory-admin"
+      ],
+      "objectsTotal": 1
+    },
+    {
+      "behavior": "anonymous-access",
+      "subject": "system:anonymous",
+      "subjectKind": "user",
+      "window": {
+        "start": "2026-03-09T14:00:00Z",
+        "end": "2026-03-09T14:10:00Z"
+      },
+      "count": 3,
+      "events": 3,
+      "firstSeen": "2026-03-09T14:06:00Z",
+      "lastSeen": "2026-03-09T14:06:02Z",
+      "detail": "verb=get",
+      "objects": [
+        "configmaps/kube-public/cm-0",
+        "configmaps/kube-public/cm-1",
+        "configmaps/kube-public/cm-2"
+      ],
+      "objectsTotal": 3
+    },
+    {
+      "behavior": "privileged-workload",
+      "subject": "system:serviceaccount:default:deployer",
+      "subjectKind": "serviceaccount",
+      "window": {
+        "start": "2026-03-09T14:00:00Z",
+        "end": "2026-03-09T14:10:00Z"
+      },
+      "count": 2,
+      "events": 2,
+      "firstSeen": "2026-03-09T14:02:00Z",
+      "lastSeen": "2026-03-09T14:03:00Z",
+      "detail": "verb=create signals=host-path-volume",
+      "objects": [
+        "apps/deployments/prod/node-agent",
+        "pods/prod/debug-shell"
+      ],
+      "objectsTotal": 2
+    },
+    {
+      "behavior": "exec-into-container",
+      "subject": "system:serviceaccount:ops:debugger",
+      "subjectKind": "serviceaccount",
+      "window": {
+        "start": "2026-03-09T14:00:00Z",
+        "end": "2026-03-09T14:10:00Z"
+      },
+      "count": 2,
+      "events": 4,
+      "firstSeen": "2026-03-09T14:05:00Z",
+      "lastSeen": "2026-03-09T14:05:03Z",
+      "detail": "subresource=exec",
+      "objects": [
+        "pods/prod/api-7d9f",
+        "pods/prod/worker-2"
+      ],
+      "objectsTotal": 2
+    }
+  ]
+}
